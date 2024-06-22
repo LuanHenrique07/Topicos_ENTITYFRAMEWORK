@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Usuário\\Desktop\\FACULDADE\\3_s\\Top\\Loja\\Loja.csproj": {}
+    "C:\\Users\\Usuário\\Desktop\\FACULDADE\\3_s\\Top\\Topicos_ENTITYFRAMEWORK\\Loja.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Usuário\\Desktop\\FACULDADE\\3_s\\Top\\Loja\\Loja.csproj": {
+    "C:\\Users\\Usuário\\Desktop\\FACULDADE\\3_s\\Top\\Topicos_ENTITYFRAMEWORK\\Loja.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Usuário\\Desktop\\FACULDADE\\3_s\\Top\\Loja\\Loja.csproj",
+        "projectUniqueName": "C:\\Users\\Usuário\\Desktop\\FACULDADE\\3_s\\Top\\Topicos_ENTITYFRAMEWORK\\Loja.csproj",
         "projectName": "Loja",
-        "projectPath": "C:\\Users\\Usuário\\Desktop\\FACULDADE\\3_s\\Top\\Loja\\Loja.csproj",
+        "projectPath": "C:\\Users\\Usuário\\Desktop\\FACULDADE\\3_s\\Top\\Topicos_ENTITYFRAMEWORK\\Loja.csproj",
         "packagesPath": "C:\\Users\\Usuário\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Usuário\\Desktop\\FACULDADE\\3_s\\Top\\Loja\\obj\\",
+        "outputPath": "C:\\Users\\Usuário\\Desktop\\FACULDADE\\3_s\\Top\\Topicos_ENTITYFRAMEWORK\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Usuário\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -43,6 +43,10 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[8.0.6, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[8.0.3, )"
