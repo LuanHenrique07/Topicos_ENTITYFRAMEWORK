@@ -33,6 +33,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<FornecedorService>();
 builder.Services.AddScoped<UsuarioService>();
+builder.Services.AddScoped<VendaService>();
 
 // Adicionar serviços do Swagger ao contêiner
 builder.Services.AddEndpointsApiExplorer();
@@ -173,8 +174,6 @@ app.MapGet("/rotaSegura", async (HttpContext context) =>
     await context.Response.WriteAsync("Acesso autorizado");
 });
 
-
-
 //Parte Produto
 
 // Método para gravar um novo produto
@@ -304,7 +303,7 @@ app.MapDelete("/fornecedores/{id}", async (int id, FornecedorService fornecedorS
     return Results.Ok();
 });
 
-//Parte Fornecedores
+//Parte Usuarios
 
 // Método para gravar um novo usuário
 app.MapPost("/createusuario", async (Usuario usuario, UsuarioService usuarioService) =>
@@ -348,6 +347,80 @@ app.MapDelete("/usuarios/{id}", async (int id, UsuarioService usuarioService) =>
 {
     await usuarioService.DeleteUsuarioAsync(id);
     return Results.Ok();
+});
+
+// Parte Vendas
+
+// Gravar uma venda
+app.MapPost("/createvenda", async (Venda venda, VendaService vendaService, ProductService productService, LojaDbContext dbContext) =>
+{
+    var cliente = await dbContext.Clientes.FindAsync(venda.ClienteId);
+    var produto = await dbContext.Produtos.FindAsync(venda.ProdutoId);
+    if (cliente == null || produto == null)
+    {
+        return Results.BadRequest("Cliente ou produto não encontrado.");
+    }
+    venda.Cliente = cliente;
+    venda.Produto = produto;
+    await vendaService.AddVendaAsync(venda);
+    return Results.Created($"/vendas/{venda.Id}", venda);
+});
+
+// Consultar vendas por produto (detalhada)
+app.MapGet("/vendas/produto/{produtoId}", async (int produtoId, VendaService vendaService) =>
+{
+    var vendas = await vendaService.GetVendasByProdutoIdAsync(produtoId);
+    var result = vendas.Select(v => new
+    {
+        ProdutoNome = v.Produto.Nome,
+        DataVenda = v.DataVenda,
+        VendaId = v.Id,
+        ClienteNome = v.Cliente.Nome,
+        QuantidadeVendida = v.Quantidade,
+        PrecoVenda = v.PrecoUnitario
+    });
+    return Results.Ok(result);
+});
+
+// Consultar vendas por produto (sumarizada)
+app.MapGet("/vendas/produto/sum/{produtoId}", async (int produtoId, VendaService vendaService) =>
+{
+    var vendas = await vendaService.GetVendasByProdutoIdAsync(produtoId);
+    var result = new
+    {
+        ProdutoNome = vendas.First().Produto.Nome,
+        TotalQuantidadeVendida = vendas.Sum(v => v.Quantidade),
+        TotalPrecoVenda = vendas.Sum(v => v.PrecoUnitario * v.Quantidade)
+    };
+    return Results.Ok(result);
+});
+
+// Consultar vendas por cliente (detalhada)
+app.MapGet("/vendas/cliente/{clienteId}", async (int clienteId, VendaService vendaService) =>
+{
+    var vendas = await vendaService.GetVendasByClienteIdAsync(clienteId);
+    var result = vendas.Select(v => new
+    {
+        ProdutoNome = v.Produto.Nome,
+        DataVenda = v.DataVenda,
+        VendaId = v.Id,
+        QuantidadeVendida = v.Quantidade,
+        PrecoVenda = v.PrecoUnitario
+    });
+    return Results.Ok(result);
+});
+
+// Consultar vendas por cliente (sumarizada)
+app.MapGet("/vendas/cliente/sum/{clienteId}", async (int clienteId, VendaService vendaService) =>
+{
+    var vendas = await vendaService.GetVendasByClienteIdAsync(clienteId);
+    var result = new
+    {
+        ClienteNome = vendas.First().Cliente.Nome,
+        TotalQuantidadeVendida = vendas.Sum(v => v.Quantidade),
+        TotalPrecoVenda = vendas.Sum(v => v.PrecoUnitario * v.Quantidade)
+    };
+    return Results.Ok(result);
 });
 
 var summaries = new[]
